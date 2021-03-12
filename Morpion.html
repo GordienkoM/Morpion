@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <span id="message">le tour de X</span>
+	  <div id=conteiner>
+        <div id="player1"> <p>Joueur 1</p></div>
+            <div id="game">
+                <div class="game-item" data-type="1"></div>
+                <div class="game-item" data-type="2"></div>
+                <div class="game-item" data-type="3"></div>
+                <div class="game-item" data-type="4"></div>
+                <div class="game-item" data-type="5"></div>
+                <div class="game-item" data-type="6"></div>
+                <div class="game-item" data-type="7"></div>
+                <div class="game-item" data-type="8"></div>
+                <div class="game-item" data-type="9"></div>
+            </div>
+        <div id="player2"><p>Joueur 2</p></div>                        
+    </div>
+    <button id="reset-game">Nettoyer</button> 
+
+    <script>  
+    let cells = document.getElementsByClassName("game-item") // on recupere des cellules
+    let reset = document.getElementById("reset-game")  //on recupere le boutton
+    let message = document.getElementById("message")  
+    player = "X" // "X" ou "O"
+    stepCount = 0 // nombre de tours
+    winCombinations = [  //tableau des cas de la victoire
+      ["1", "2", "3"],
+      ["1", "4", "7"],
+      ["1", "5", "9"],
+      ["2", "5", "8"],
+      ["3", "6", "9"],
+      ["3", "5", "7"],
+      ["4", "5", "6"],
+      ["7", "8", "9"]
+    ]
+    dataX = []  //le tableu des tours de X
+    dataO = []  //le tableu des tours de O
+    for (cell of cells) {
+        cell.addEventListener("click", currentStep); //evenement de click sur la cellule
+    }
+    // la function qui decrire chaque tour
+    function currentStep() {
+      let num = this.dataset.type                      //on recupère le numero de la case qui était cliqué
+      if (!this.textContent) {                          // on verifie que il n'y a rien dans la cellule
+          this.innerText = player                       // on met  text (joueur actuel) dans la cellule
+          if (player === "X")  dataX.push(num)          // on met num dans tubleau  
+            else dataO.push(num)
+      //si un joueur a gagné
+      if ( checkWin(dataO) || checkWin(dataX) ) {
+        for (cell of cells) {
+          cell.removeEventListener("click", currentStep) // on suprime la possibilité de faire l'evenement après un click
+        }
+        return (message.innerText = "Joueur " + player+ " a gagné")
+      }
+      changePlayer() //on change joueur
+      stepCount++  //on agmente nombre de tour
+      if (stepCount === 9)  message.innerText = "Match null"    // on verifier si on effetuer 9 tours
+        else message.innerText = "tour de jouer " + player      // sinon on affiche nouveux joueur
+      }
+    }
+
+    //function pour changer valeur de Joueur
+    function changePlayer() {
+      if (player === "X") player = "O"
+        else player = "X"
+    }
+
+    //on vide des sellule quand on click sur boutton "Netoyer"
+    reset.addEventListener("click", function() {
+      for (cell of cells) {
+      cell.innerText = ""
+      }
+      dataO = []              //on vide le tableau de tours pour O
+      dataX = []              //on vide le tableau de tours pour x
+      player = "O"            
+      stepCount = 0           //on anulle compter de tours
+      message.innerText = "tour de jouer " + player
+      for (cell of cells) {
+      cell.addEventListener("click", currentStep)  // on remet la possibilité de faire d'evenement après un click 
+      }
+    });
+
+    // function pour verefie si quelqu'un gagne
+    function checkWin(arrayTours) {             //  "arrayTours" - tableau de tours pour un joeur
+    for ( winCombination of winCombinations) {  //on parcoure le tableau des combinations de la victoire 
+    count = 0
+      for (var winNumber of winCombination) {  
+        if (arrayTours.indexOf(winNumber) !== -1) {
+          count++;
+          if (count === 3) {
+          //  for (var winNumber of winCombination)
+            return true;
+          }
+        }
+      }
+      count = 0;       
+     }
+    }
+ </script>
+
+</body>
+</html>
