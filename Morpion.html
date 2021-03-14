@@ -7,31 +7,52 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <span id="message">le tour de X</span>
+    <span id="message">le tour de Timofei</span>
 	  <div id=conteiner>
-        <div id="player1"> <p>Joueur 1</p></div>
+        <div id="player1"> 
+          <p id="name1">Timofei</p>
+          <p id="symbol1">O</p>
+          <p>Score: <span id="score1">0</span></p>
+        </div>
             <div id="game">
-                <div class="game-item" data-type="1"></div>
-                <div class="game-item" data-type="2"></div>
-                <div class="game-item" data-type="3"></div>
-                <div class="game-item" data-type="4"></div>
-                <div class="game-item" data-type="5"></div>
-                <div class="game-item" data-type="6"></div>
-                <div class="game-item" data-type="7"></div>
-                <div class="game-item" data-type="8"></div>
-                <div class="game-item" data-type="9"></div>
+                <div class="game-item" data-number="1"></div>
+                <div class="game-item" data-number="2"></div>
+                <div class="game-item" data-number="3"></div>
+                <div class="game-item" data-number="4"></div>
+                <div class="game-item" data-number="5"></div>
+                <div class="game-item" data-number="6"></div>
+                <div class="game-item" data-number="7"></div>
+                <div class="game-item" data-number="8"></div>
+                <div class="game-item" data-number="9"></div>
             </div>
-        <div id="player2"><p>Joueur 2</p></div>                        
+        <div id="player2">
+          <p id="name2">Rodion</p>
+          <p id="symbol2">X</p>
+          <p> Score: <span id="score2">0</span></p>
+        </div>                        
     </div>
     <button id="reset-game">Nettoyer</button> 
 
-    <script>  
+    <script>
+    class Player{
+      constructor(name, symbol, color){
+        this.name = name
+        this.symbol = symbol
+        this.data = []            //tableaiu pour memoriser les cellules cliquées par un joueur
+        this.color = color        //la couleur de symbol poue un joueur
+        this.score = 0
+      }
+    }
+    player1 = new Player("Timofei", "O", "green")
+    player2 = new Player("Rodion", "X", "red")
+
     let cells = document.getElementsByClassName("game-item") // on recupere des cellules
-    let reset = document.getElementById("reset-game")  //on recupere le boutton
+    let reset = document.getElementById("reset-game")        // on recupere le boutton
     let message = document.getElementById("message")  
-    player = "X" // "X" ou "O"
-    stepCount = 0 // nombre de tours
-    winCombinations = [  //tableau des cas de la victoire
+    let currentPlayer = player1  
+    stepCount = 0   // nombre de tours
+    //tableau des conbinisons des cas de la victoire                                          
+    winCombinations = [  
       ["1", "2", "3"],
       ["1", "4", "7"],
       ["1", "5", "9"],
@@ -41,62 +62,65 @@
       ["4", "5", "6"],
       ["7", "8", "9"]
     ]
-    dataX = []  //le tableu des tours de X
-    dataO = []  //le tableu des tours de O
     for (cell of cells) {
-        cell.addEventListener("click", currentStep); //evenement de click sur la cellule
+        cell.addEventListener("click", currentStep)         // evenement de click sur la cellule
     }
     // la function qui decrire chaque tour
     function currentStep() {
-      let num = this.dataset.type                      //on recupère le numero de la case qui était cliqué
-      if (!this.textContent) {                          // on verifie que il n'y a rien dans la cellule
-          this.innerText = player                       // on met  text (joueur actuel) dans la cellule
-          if (player === "X")  dataX.push(num)          // on met num dans tubleau  
-            else dataO.push(num)
-      //si un joueur a gagné
-      if ( checkWin(dataO) || checkWin(dataX) ) {
-        for (cell of cells) {
-          cell.removeEventListener("click", currentStep) // on suprime la possibilité de faire l'evenement après un click
+      let num = this.dataset.number                         // on recupère le numero de la case qui était cliqué
+      if (!this.textContent) {                              // on verifie que il n'y a rien dans la cellule
+        this.classList.add(currentPlayer.color);            // on ajoute la coleur pour un symbol dans la cellule
+        this.innerText = currentPlayer.symbol;              // on met le symbol dans la cellule
+        (currentPlayer.symbol === player1.symbol) ? player1.data.push(num): player2.data.push(num)  // on ajoute le numéro de la cellule cliquée dans un tubleau des cellules cliquées 
+        //si un joueur a gagné
+        if ( checkWin(player1.data) || checkWin(player2.data) ) {
+          for (cell of cells) {
+            cell.removeEventListener("click", currentStep) // on suprime la possibilité de faire l'evenement après un click
+          }
+          currentPlayer.score++
+          document.getElementById("score1").innerText = player1.score
+          document.getElementById("score2").innerText = player2.score
+          message.innerText = currentPlayer.name+ " a gagné"
+          return 
         }
-        return (message.innerText = "Joueur " + player+ " a gagné")
-      }
       changePlayer() //on change joueur
       stepCount++  //on agmente nombre de tour
-      if (stepCount === 9)  message.innerText = "Match null"    // on verifier si on effetuer 9 tours
-        else message.innerText = "tour de jouer " + player      // sinon on affiche nouveux joueur
+      if (stepCount === 9)  message.innerText = "Match null"          // on verifier si on a effetué 9 tours
+        else message.innerText = "tour de " + currentPlayer.name      // sinon on affiche le nouveau joueur
       }
     }
 
-    //function pour changer valeur de Joueur
+    //function pour changer joueur actuel
     function changePlayer() {
-      if (player === "X") player = "O"
-        else player = "X"
+      (currentPlayer === player1) ? currentPlayer = player2 : currentPlayer = player1
     }
 
     //on vide des sellule quand on click sur boutton "Netoyer"
     reset.addEventListener("click", function() {
       for (cell of cells) {
-      cell.innerText = ""
+        cell.innerText = ""
       }
-      dataO = []              //on vide le tableau de tours pour O
-      dataX = []              //on vide le tableau de tours pour x
-      player = "O"            
-      stepCount = 0           //on anulle compter de tours
-      message.innerText = "tour de jouer " + player
+      player1.data = []              //on vide le tableau de tours pour player1
+      player2.data = []              //on vide le tableau de tours pour player2      
+      stepCount = 0 
+      changePlayer()                 //on anulle compter de tours
       for (cell of cells) {
-      cell.addEventListener("click", currentStep)  // on remet la possibilité de faire d'evenement après un click 
+        cell.classList.remove(player1.color, player2.color)
+      }
+      message.innerText = "tour de " + currentPlayer.name
+      for (cell of cells) {
+        cell.addEventListener("click", currentStep)  // on remet la possibilité de faire d'evenement après un click 
       }
     });
 
     // function pour verefie si quelqu'un gagne
-    function checkWin(arrayTours) {             //  "arrayTours" - tableau de tours pour un joeur
+    function checkWin(arrayTours) {             //  "arrayTours" - tableau de cellules cliquées par un joueur
     for ( winCombination of winCombinations) {  //on parcoure le tableau des combinations de la victoire 
     count = 0
       for (var winNumber of winCombination) {  
         if (arrayTours.indexOf(winNumber) !== -1) {
           count++;
           if (count === 3) {
-          //  for (var winNumber of winCombination)
             return true;
           }
         }

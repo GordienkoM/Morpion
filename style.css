@@ -11,7 +11,7 @@ body {
 }
 
 #conteiner {
-    width: 700px;
+    width: 702px;
     display:flex;
     border: 2px solid black;
 	justify-content: center;
@@ -19,10 +19,16 @@ body {
 
 }
 
-.playe1, .playe2 {
+#player1, #player2 {
+	width: 200px;
 	border: 1px solid black;
+	text-align: center;
 }
 
+#player1 p, #player2 p {
+	font-size: 2em;
+	width: 100%;
+}
 
 #message {
 	font-size: 2em;
@@ -43,12 +49,20 @@ body {
 	padding-top: 20px;
     border: 2px solid black;  
 }	
+
+
 #reset-game {
 	font-size:1.5em;
 	border: 3px solid black;
 	border-radius: 20px;
 	cursor: pointer;
 
+}
 
+.red{
+	color:red;
 }
 		
+.green{
+	color:green;
+}
