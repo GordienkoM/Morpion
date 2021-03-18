@@ -63,6 +63,9 @@
       ["7", "8", "9"]
     ]
     for (cell of cells) {
+        cell.classList.add("redFrame")                      // on ajoute la classe pour les bordures rouges
+    }
+    for (cell of cells) {
         cell.addEventListener("click", currentStep)         // evenement de click sur la cellule
     }
     // la function qui decrire chaque tour
@@ -76,6 +79,7 @@
         if ( checkWin(player1.data) || checkWin(player2.data) ) {
           for (cell of cells) {
             cell.removeEventListener("click", currentStep) // on suprime la possibilité de faire l'evenement après un click
+            cell.classList.remove("redFrame")
           }
           currentPlayer.score++
           document.getElementById("score1").innerText = player1.score
@@ -85,7 +89,12 @@
         }
       changePlayer() //on change joueur
       stepCount++  //on agmente nombre de tour
-      if (stepCount === 9)  message.innerText = "Match null"          // on verifier si on a effetué 9 tours
+      if (stepCount === 9){
+        message.innerText = "Match null"          // on verifier si on a effetué 9 tours
+        for (cell of cells) {
+            cell.classList.remove("redFrame")
+          }
+      } 
         else message.innerText = "tour de " + currentPlayer.name      // sinon on affiche le nouveau joueur
       }
     }
@@ -109,7 +118,8 @@
       }
       message.innerText = "tour de " + currentPlayer.name
       for (cell of cells) {
-        cell.addEventListener("click", currentStep)  // on remet la possibilité de faire d'evenement après un click 
+        cell.addEventListener("click", currentStep)  // on remet la possibilité de faire d'evenement après un click
+        cell.classList.add("redFrame")  
       }
     });
 

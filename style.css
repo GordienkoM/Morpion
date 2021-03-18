@@ -66,3 +66,7 @@ body {
 .green{
 	color:green;
 }
+
+.redFrame:hover{
+	border-color: red;
+}
